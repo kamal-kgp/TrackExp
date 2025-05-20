@@ -1,0 +1,180 @@
+### Expense Tracker API
+# Base URL for the API
+@baseUrl = http://localhost:8080
+@contentType = application/json
+@bearerToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTc0NzU1MzQyOSwiZXhwIjoxNzQ3NjM5ODI5fQ.6hd7zNFd0X0gEVTOYF3keHobA3N2jvDPofPjmcIUQ8Iyno7IhkgmXdA6k3VMJ5TPRBCG_XbYBtJYT4a6vVZlGA
+
+# ==============================================================================
+# == Authentication Endpoints ==
+# ==============================================================================
+
+### Register a new user
+# @name signup
+POST {{baseUrl}}/api/auth/signup
+Content-Type: {{contentType}}
+
+{
+  "username": "testuser",
+  "email": "testuser@example.com",
+  "password": "Password123"
+}
+
+### Register another user (for testing with different users if needed)
+POST {{baseUrl}}/api/auth/signup
+Content-Type: {{contentType}}
+
+{
+  "username": "anotheruser",
+  "email": "another@example.com",
+  "password": "Password456"
+}
+
+### Authenticate user and get JWT token
+# @name signin
+POST {{baseUrl}}/api/auth/signin
+Content-Type: {{contentType}}
+
+{
+  "username": "testuser",
+  "password": "Password123"
+}
+
+# To capture the token from the signin response (if your HTTP client supports it)
+# For VS Code REST Client extension, you can do something like:
+# > {% client.global.set("bearerToken", response.body.token); %}
+
+
+# ==============================================================================
+# == Expenses Endpoints ==
+# ==============================================================================
+# Note: Remember to replace @bearerToken with the actual token or use client's variable feature.
+#       If your client doesn't automatically set @bearerToken from the signin response,
+#       you'll need to manually copy the token from the signin response and paste it below.
+#       For example: @bearerToken = eyJhbGciOiJIUzI1NiJ9...
+
+### Create a new expense
+# Requires authentication
+POST {{baseUrl}}/api/expenses
+Content-Type: {{contentType}}
+Authorization: Bearer {{bearerToken}}
+
+{
+  "title": "Groceries",
+  "amount": 75.50,
+  "currency": "USD",
+  "category": "FOOD",
+  "date": "2025-05-18"
+}
+
+### Create another expense
+# Requires authentication
+POST {{baseUrl}}/api/expenses
+Content-Type: {{contentType}}
+Authorization: Bearer {{bearerToken}}
+
+{
+  "title": "Train Ticket",
+  "amount": 22.00,
+  "currency": "USD",
+  "category": "TRANSPORTATION",
+  "date": "2025-05-17"
+}
+
+### Create a third expense for different category and date
+# Requires authentication
+POST {{baseUrl}}/api/expenses
+Content-Type: {{contentType}}
+Authorization: Bearer {{bearerToken}}
+
+{
+  "title": "Movie Tickets",
+  "amount": 30.00,
+  "currency": "USD",
+  "category": "ENTERTAINMENT",
+  "date": "2025-05-19"
+}
+
+
+### Get all expenses for current user
+# Requires authentication
+GET {{baseUrl}}/api/expenses
+Authorization: Bearer {{bearerToken}}
+
+### Get expense by ID
+# Requires authentication
+# Replace {id} with an actual expense ID from the create response or get all response
+GET {{baseUrl}}/api/expenses/1
+Authorization: Bearer {{bearerToken}}
+
+### Update expense
+# Requires authentication
+# Replace {id} with an actual expense ID
+PUT {{baseUrl}}/api/expenses/1
+Content-Type: {{contentType}}
+Authorization: Bearer {{bearerToken}}
+
+{
+  "title": "Weekly Groceries",
+  "amount": 85.00,
+  "currency": "USD",
+  "category": "FOOD",
+  "date": "2025-05-18"
+}
+
+### Delete expense
+# Requires authentication
+# Replace {id} with an actual expense ID
+DELETE {{baseUrl}}/api/expenses/2
+Authorization: Bearer {{bearerToken}}
+
+### Filter expenses by category and date range
+# Requires authentication
+GET {{baseUrl}}/api/expenses/filter?category=FOOD&startDate=2025-05-01&endDate=2025-05-31
+Authorization: Bearer {{bearerToken}}
+
+### Filter expenses by date range only
+# Requires authentication
+GET {{baseUrl}}/api/expenses/filter?startDate=2025-05-15&endDate=2025-05-20
+Authorization: Bearer {{bearerToken}}
+
+### Filter expenses by category only
+# Requires authentication
+GET {{baseUrl}}/api/expenses/filter?category=ENTERTAINMENT
+Authorization: Bearer {{bearerToken}}
+
+### Search expenses by title (assuming your filter endpoint handles a 'searchTerm' or similar query param based on your service logic)
+# The readme shows "search expenses by title" as a core feature, but the filter endpoint example
+# doesn't explicitly show a search term parameter. I'm assuming your ExpenseService's
+# filterExpenses method (which has `searchTerm: String?`) is what `/api/expenses/filter` hits.
+# If the search parameter is different, adjust `searchTerm` below.
+# Requires authentication
+GET {{baseUrl}}/api/expenses/filter?searchTerm=Groceries
+Authorization: Bearer {{bearerToken}}
+
+### Get today's expenses
+# Requires authentication
+# Note: The definition of "today" depends on the server's current date.
+GET {{baseUrl}}/api/expenses/today
+Authorization: Bearer {{bearerToken}}
+
+### Get this week's expenses
+# Requires authentication
+# Note: The definition of "this week" depends on the server's current date.
+GET {{baseUrl}}/api/expenses/week
+Authorization: Bearer {{bearerToken}}
+
+### Get this month's expenses
+# Requires authentication
+# Note: The definition of "this month" depends on the server's current date.
+GET {{baseUrl}}/api/expenses/month
+Authorization: Bearer {{bearerToken}}
+
+### Get expense summary for a date range
+# Requires authentication
+GET {{baseUrl}}/api/expenses/summary?startDate=2025-05-01&endDate=2025-05-31
+Authorization: Bearer {{bearerToken}}
+
+### Get expense summary for a different date range
+# Requires authentication
+GET {{baseUrl}}/api/expenses/summary?startDate=2025-01-01&endDate=2025-12-31
+Authorization: Bearer {{bearerToken}}
